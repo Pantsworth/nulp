@@ -3,10 +3,10 @@ import unittest
 import bayes_template
 
 
-class Test_Classifier(unittest.TestCase):
+class TestClassifier(unittest.TestCase):
 
     def test_something(self):
-        return 1
+        self.assertEqual(1,1)
 
 
 
