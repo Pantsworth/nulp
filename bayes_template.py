@@ -75,7 +75,7 @@ class Bayes_Classifier:
         if sToken != "":
             lTokens.append(sToken)
 
-      return lTokens
+        return lTokens
 
 
 def freed_tokenize(sText):
