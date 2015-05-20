@@ -67,3 +67,25 @@ class Bayes_Classifier:
          lTokens.append(sToken)
 
       return lTokens
+
+
+def freed_tokenize(sText):
+      """Given a string of text sText, returns a list of the individual tokens that
+      occur in that string (in order)."""
+
+      lTokens = []
+      sToken = ""
+      for c in sText:
+         if re.match("[a-zA-Z0-9]", str(c)) != None or c == "\"" or c == "_" or c == "-":
+            sToken += c
+         else:
+            if sToken != "":
+               lTokens.append(sToken)
+               sToken = ""
+            if c.strip() != "":
+               lTokens.append(str(c.strip()))
+
+      if sToken != "":
+         lTokens.append(sToken)
+
+      return lTokens
