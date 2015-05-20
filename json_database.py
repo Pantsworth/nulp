@@ -54,9 +54,10 @@ def load_json_database():
 
     with open(file_path_short + 'data.json', 'r') as f:
          data = json.load(f)
-         # print data
 
-    for datum in data:
-        datum = json.loads(datum)
-        print datum['text']
-        print "done"
+    # for datum in data:
+    #     datum = json.loads(datum)
+    #     print datum['text']
+    #     print "done"
+
+    return data
