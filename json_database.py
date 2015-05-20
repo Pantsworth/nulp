@@ -35,3 +35,4 @@ def read_reviews(file_path):
     for datum in data:
         datum = json.loads(datum)
         print datum['text']
+        print "done"
