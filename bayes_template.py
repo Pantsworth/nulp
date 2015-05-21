@@ -36,7 +36,6 @@ class Bayes_Classifier:
         neg_freq = {}
         pos_pres = {}
         neg_pres = {}
-        pos_words = []
 
         #for word in total_words:
         #    pos_freq[word] = 0.0
@@ -45,12 +44,24 @@ class Bayes_Classifier:
         #    neg_pres[word] = 0.0
 
         # Go through all files
+        pos_word_counter = 0   #Count the total number of words and documents
+        neg_word_counter = 0
+        pos_review_counter = 0   #Count the total number of words and documents
+        neg_review_counter = 0
+
+
         for review in data:
             # get text and store in string
             review = json.loads(review)
             text = review['text']
             #words = self.tokenize(text)
             words = text.split(' ')
+            if review['status'] == '5':
+                pos_word_counter += len(words)
+                pos_review_counter += 1
+            else:
+                neg_word_counter += len(words)
+                neg_review_counter += 1
 
             # Frequency
             if review['status'] == '5':
@@ -58,13 +69,13 @@ class Bayes_Classifier:
                     if word in pos_freq:
                         pos_freq[word] += 1
                     else:
-                        pos_freq[word] = 1
+                        pos_freq[word] = 1.0
             else:
                 for word in words:
                     if word in neg_freq:
                         neg_freq[word] += 1
                     else:
-                        neg_freq[word] = 1
+                        neg_freq[word] = 1.0
             # Presence
             if review['status'] == '5':
                 while len(words) > 0:
@@ -72,7 +83,7 @@ class Bayes_Classifier:
                     if word in pos_pres:
                         pos_pres[word] += 1
                     else:
-                        pos_pres[word] = 1
+                        pos_pres[word] = 1.0
                     while word in words:
                         words.remove(word)
             else:
@@ -81,12 +92,27 @@ class Bayes_Classifier:
                     if word in neg_pres:
                         neg_pres[word] += 1
                     else:
-                        neg_pres[word] = 1
+                        neg_pres[word] = 1.0
                     while word in words:
                         words.remove(word)
 
 
-            
+
+
+
+
+
+        # Normalize the counts after going through all the files
+        for a in pos_freq:
+            pos_freq[a] /= pos_word_counter
+        for a in neg_freq:
+            neg_freq[a] /= neg_word_counter
+        for a in pos_pres:
+            pos_pres[a] /= pos_review_counter
+        for a in neg_pres:
+            neg_pres[a] /= neg_review_counter
+
+
 
         print 'Positive Frequency:'
         print [pos_freq[i] for i in pos_freq if pos_freq[i] != 0.0]
@@ -96,11 +122,6 @@ class Bayes_Classifier:
         print [pos_pres[i] for i in pos_pres if pos_pres[i] != 0.0]
         print 'Negative Presence:'
         print [neg_pres[i] for i in neg_pres if neg_pres[i] != 0.0]
-
-
-        # After going through all the files
-
-
 
 
 
