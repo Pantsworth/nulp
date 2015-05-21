@@ -23,12 +23,12 @@ class Bayes_Classifier:
         total_words = []
         # Go through all positive and negative reviews
         data = json_database.load_json_database()
-        for review in data:
-            review = json.loads(review)
-            #print review['text']
-            for word in review['text'].split(' '):
-                if word not in total_words:
-                    total_words.append(word)
+        #for review in data:
+        #    review = json.loads(review)
+        #    #print review['text']
+        #    for word in review['text'].split(' '):
+        #        if word not in total_words:
+        #            total_words.append(word)
 
 
         # Make two dictionaries each for frequency and presence
@@ -38,11 +38,11 @@ class Bayes_Classifier:
         neg_pres = {}
         pos_words = []
 
-        for word in total_words:
-            pos_freq[word] = 0.0
-            neg_freq[word] = 0.0
-            pos_pres[word] = 0.0
-            neg_pres[word] = 0.0
+        #for word in total_words:
+        #    pos_freq[word] = 0.0
+        #    neg_freq[word] = 0.0
+        #    pos_pres[word] = 0.0
+        #    neg_pres[word] = 0.0
 
         # Go through all files
         for review in data:
@@ -53,30 +53,50 @@ class Bayes_Classifier:
             words = text.split(' ')
 
             # Frequency
-            if review['status'] == 5:
+            if review['status'] == '5':
                 for word in words:
-                    pos_freq[word] += 1
+                    if word in pos_freq:
+                        pos_freq[word] += 1
+                    else:
+                        pos_freq[word] = 1
             else:
                 for word in words:
-                    neg_freq[word] += 1
-
+                    if word in neg_freq:
+                        neg_freq[word] += 1
+                    else:
+                        neg_freq[word] = 1
             # Presence
-
-            #for (word, freq) in pos_words:
-            
-            if review['status'] == 5:
-                for word in total_words:
-                    if word in words:
+            if review['status'] == '5':
+                while len(words) > 0:
+                    word = words[0]
+                    if word in pos_pres:
                         pos_pres[word] += 1
+                    else:
+                        pos_pres[word] = 1
+                    while word in words:
+                        words.remove(word)
             else:
-                for word in total_words:
-                    if word in words:
-                        pos_pres[word] += 1
+                while len(words) > 0:
+                    word = words[0]
+                    if word in neg_pres:
+                        neg_pres[word] += 1
+                    else:
+                        neg_pres[word] = 1
+                    while word in words:
+                        words.remove(word)
 
-        print pos_freq
-        print neg_freq
-        print pos_pres
-        print neg_pres
+
+            
+
+        print 'Positive Frequency:'
+        print [pos_freq[i] for i in pos_freq if pos_freq[i] != 0.0]
+        print 'Negative Frequency:'
+        print [neg_freq[i] for i in neg_freq if neg_freq[i] != 0.0]
+        print 'Positive Presence:'
+        print [pos_pres[i] for i in pos_pres if pos_pres[i] != 0.0]
+        print 'Negative Presence:'
+        print [neg_pres[i] for i in neg_pres if neg_pres[i] != 0.0]
+
 
         # After going through all the files
 
