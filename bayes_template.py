@@ -5,6 +5,8 @@
 #
 
 import math, os, pickle, re
+import json
+import json_database
 
 
 class Bayes_Classifier:
@@ -17,13 +19,70 @@ class Bayes_Classifier:
         """Trains the Naive Bayes Sentiment Classifier."""
         # Open the database
         # Tokenize each set of text
-        # Make two dictionaries
 
-        # get text and store in string
+        total_words = []
+        # Go through all positive and negative reviews
+        data = json_database.load_json_database()
+        for review in data:
+            review = json.loads(review)
+            #print review['text']
+            for word in review['text'].split(' '):
+                if word not in total_words:
+                    total_words.append(word)
 
-        text = 'thing'
-        text = text
-        return text
+
+        # Make two dictionaries each for frequency and presence
+        pos_freq = {}
+        neg_freq = {}
+        pos_pres = {}
+        neg_pres = {}
+        pos_words = []
+
+        for word in total_words:
+            pos_freq[word] = 0.0
+            neg_freq[word] = 0.0
+            pos_pres[word] = 0.0
+            neg_pres[word] = 0.0
+
+        # Go through all files
+        for review in data:
+            # get text and store in string
+            review = json.loads(review)
+            text = review['text']
+            #words = self.tokenize(text)
+            words = text.split(' ')
+
+            # Frequency
+            if review['status'] == 5:
+                for word in words:
+                    pos_freq[word] += 1
+            else:
+                for word in words:
+                    neg_freq[word] += 1
+
+            # Presence
+
+            #for (word, freq) in pos_words:
+            
+            if review['status'] == 5:
+                for word in total_words:
+                    if word in words:
+                        pos_pres[word] += 1
+            else:
+                for word in total_words:
+                    if word in words:
+                        pos_pres[word] += 1
+
+        print pos_freq
+        print neg_freq
+        print pos_pres
+        print neg_pres
+
+        # After going through all the files
+
+
+
+
 
     
     def classify(self, sText):

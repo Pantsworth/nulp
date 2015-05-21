@@ -4,7 +4,6 @@ __author__ = 'DoctorWatson'
 import json
 import os
 from json import JSONEncoder
-from bayes_template import Bayes_Classifier
 import bayes_template
 
 
@@ -42,7 +41,7 @@ def load_json_database():
     """paths for each user will be different, and I didn't have a good way to specify it..."""
 
     pants_path = "/Users/DoctorWatson/Documents/College Stuff/Spring 2015/EECS 348 AI/nulp/"
-    overlord_path = "/Users/stevenvorbrich/Documents/nulp"
+    overlord_path = "/Users/stevenvorbrich/Documents/nulp/"
     flame_path = ""
 
     if  os.path.exists(pants_path):
