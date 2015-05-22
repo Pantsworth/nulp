@@ -137,6 +137,7 @@ class Bayes_Classifier:
         #
 
 
+
         return 1
 
     
@@ -220,3 +221,25 @@ def freed_tokenize(sText):
          lTokens.append(sToken)
 
       return lTokens
+
+
+def load_pickle(filename):
+    model_file = relative_path(filename)
+    if os.path.isfile(model_file):
+        return pickle.load(open(model_file, 'rb'))
+    return []
+
+
+def save_pickle(object, filename):
+    model_file = open(relative_path(filename), 'wb')
+    pickle.dump(object, model_file)
+    model_file.close()
+
+
+def relative_path(path):
+    """
+    Get file path relative to calling script's directory
+    :param path: filename or file path
+    :return: full path name, relative to script location
+    """
+    return os.path.join(os.path.join(os.getcwd(), os.path.dirname(__file__)), path)
