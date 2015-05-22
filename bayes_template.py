@@ -59,7 +59,7 @@ class Bayes_Classifier:
             text = review['text']
             #words = self.tokenize(text)
             words = nltk.word_tokenize(text)
-            words = [w.lower() for w in words if w.isalpha()]
+            words = [w.lower() for w in words]
             # print words
             if review['status'] == '5':
                 pos_word_counter += len(words)
@@ -105,16 +105,16 @@ class Bayes_Classifier:
         # Normalize the counts after going through all the files
         for a in self.pos_freq:
             self.pos_freq[a] += 1
-            self.pos_freq[a] /= (pos_word_counter+1)
+            self.pos_freq[a] /= (pos_word_counter+len(self.pos_pres))
         for a in self.neg_freq:
             self.neg_freq[a] += 1
-            self.neg_freq[a] /= (neg_word_counter+1)
+            self.neg_freq[a] /= (neg_word_counter+len(self.neg_pres))
         for a in self.pos_pres:
             self.pos_pres[a] += 1
-            self.pos_pres[a] /= (pos_review_counter+1)
+            self.pos_pres[a] /= (pos_review_counter+len(self.pos_pres))
         for a in self.neg_pres:
             self.neg_pres[a] += 1
-            self.neg_pres[a] /= (neg_review_counter+1)
+            self.neg_pres[a] /= (neg_review_counter+len(self.neg_pres))
 
 
 
@@ -157,23 +157,22 @@ class Bayes_Classifier:
 
         for token in word_tokens:
             try:
-                pos_sum += -(math.log10(self.pos_pres[token]))
+                pos_sum += (math.log10(self.pos_pres[token]))
+                neg_sum += (math.log10(self.neg_pres[token]))
             except KeyError:
-                pos_miss += 1
-                print token, pos_miss
-            try:
-                neg_sum += -(math.log10(self.neg_pres[token]))
-            except KeyError:
-                neg_miss += 1
-                print token, neg_miss
+                pass
 
-        print pos_sum, neg_sum
+        # print pos_sum, neg_sum
 
-        pos_sum *= (1.0*(tokens_length-pos_miss)/tokens_length)
-        neg_sum *= (1.0*(tokens_length-neg_miss)/tokens_length)
-
-
-        print pos_sum, neg_sum
+        # pos_sum *= (1.0*(tokens_length-pos_miss)/tokens_length)
+        # neg_sum *= (1.0*(tokens_length-neg_miss)/tokens_length)
+        pos_sum-neg_sum
+        if abs(pos_sum-neg_sum) < 1.5:
+            return 'neutral'
+        if pos_sum > neg_sum:
+            return 'positive'
+        else:
+            return 'negative'
 
 
     def loadFile(self, sFilename):
