@@ -16,12 +16,16 @@ class Bayes_Classifier:
         cache of a trained classifier has been stored, it loads this cache.  Otherwise,
         the system will proceed through training.  After running this method, the classifier
         is ready to classify input text."""
-        self.pos_freq = {}
-        self.neg_freq = {}
-        self.pos_pres = {}
-        self.neg_pres = {}
+        self.pos_freq = load_pickle('pos_freq.p')
+        self.neg_freq = load_pickle('neg_freq.p')
+        self.pos_pres = load_pickle('pos_pres.p')
+        self.neg_pres = load_pickle('neg_pres.p')
 
     def train(self):
+
+        if self.pos_freq:
+            return
+
         """Trains the Naive Bayes Sentiment Classifier."""
         # Open the database
         # Tokenize each set of text
@@ -136,7 +140,10 @@ class Bayes_Classifier:
         #             print token
         #
 
-
+        save_pickle(self.pos_freq, 'pos_freq.p')
+        save_pickle(self.neg_freq, 'neg_freq.p')
+        save_pickle(self.pos_pres, 'pos_pres.p')
+        save_pickle(self.neg_pres, 'neg_pres.p')
 
         return 1
 
@@ -227,7 +234,7 @@ def load_pickle(filename):
     model_file = relative_path(filename)
     if os.path.isfile(model_file):
         return pickle.load(open(model_file, 'rb'))
-    return []
+    return {}
 
 
 def save_pickle(object, filename):
