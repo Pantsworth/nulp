@@ -157,8 +157,8 @@ class Bayes_Classifier:
         # take in text, tokenize it
         # check how likely words used are to be positive
         # check how likely it is words used are negative
-        self.pos_pres['the']
-        self.pos_freq['the']
+        print self.pos_pres['the']
+        print self.pos_freq['the']
 
 
     def loadFile(self, sFilename):
