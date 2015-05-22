@@ -22,11 +22,11 @@ class Bayes_Classifier:
         self.neg_pres = load_pickle('neg_pres.p')
 
     def train(self):
+        """Trains the Naive Bayes Sentiment Classifier."""
 
         if self.pos_freq:
             return
 
-        """Trains the Naive Bayes Sentiment Classifier."""
         # Open the database
         # Tokenize each set of text
 
@@ -104,13 +104,17 @@ class Bayes_Classifier:
 
         # Normalize the counts after going through all the files
         for a in self.pos_freq:
-            self.pos_freq[a] /= pos_word_counter
+            self.pos_freq[a] += 1
+            self.pos_freq[a] /= (pos_word_counter+1)
         for a in self.neg_freq:
-            self.neg_freq[a] /= neg_word_counter
+            self.neg_freq[a] += 1
+            self.neg_freq[a] /= (neg_word_counter+1)
         for a in self.pos_pres:
-            self.pos_pres[a] /= pos_review_counter
+            self.pos_pres[a] += 1
+            self.pos_pres[a] /= (pos_review_counter+1)
         for a in self.neg_pres:
-            self.neg_pres[a] /= neg_review_counter
+            self.neg_pres[a] += 1
+            self.neg_pres[a] /= (neg_review_counter+1)
 
 
 
@@ -123,22 +127,6 @@ class Bayes_Classifier:
         print 'Negative Presence:'
         print [self.neg_pres[i] for i in self.neg_pres if self.neg_pres[i] != 0.0]
 
-
-        # After going through all the files
-        # data = json_database.load_json_database()
-        # tokenizer = RegexpTokenizer(r'\w+')
-        #
-        # for datum in data:
-        #     datum = json.loads(datum)
-        #     tokens_list = nltk.word_tokenize(datum['text'])
-        #     # tokens_list = tokenizer.tokenize(datum['text'])
-        #     tokens_list = nltk.Text(tokens_list)
-        #     tokens_list = [w.lower() for w in tokens_list if w.isalpha()]
-        #
-        #     if (datum['status'] == '5'):
-        #         for token in tokens_list:
-        #             print token
-        #
 
         save_pickle(self.pos_freq, 'pos_freq.p')
         save_pickle(self.neg_freq, 'neg_freq.p')
@@ -157,8 +145,35 @@ class Bayes_Classifier:
         # take in text, tokenize it
         # check how likely words used are to be positive
         # check how likely it is words used are negative
-        print self.pos_pres['the']
-        print self.pos_freq['the']
+
+        word_tokens = nltk.word_tokenize(sText)
+        word_tokens = [w.lower() for w in word_tokens if w.isalpha()]
+
+        tokens_length = len(word_tokens)
+        pos_sum = 0
+        neg_sum = 0
+        pos_miss = 0
+        neg_miss = 0
+
+        for token in word_tokens:
+            try:
+                pos_sum += -(math.log10(self.pos_pres[token]))
+            except KeyError:
+                pos_miss += 1
+                print token, pos_miss
+            try:
+                neg_sum += -(math.log10(self.neg_pres[token]))
+            except KeyError:
+                neg_miss += 1
+                print token, neg_miss
+
+        print pos_sum, neg_sum
+
+        pos_sum *= (1.0*(tokens_length-pos_miss)/tokens_length)
+        neg_sum *= (1.0*(tokens_length-neg_miss)/tokens_length)
+
+
+        print pos_sum, neg_sum
 
 
     def loadFile(self, sFilename):

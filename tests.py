@@ -12,11 +12,10 @@ class TestClassifier(unittest.TestCase):
     def test_train(self):
         bayes = Bayes_Classifier()
         Bayes_Classifier.train(bayes)
-        bayes.classify("the")
-
-
-
-
+        # bayes.classify("Unstoppable and righteous, it roars across the no-lane hardpan like the four-iron horseman of "
+        #                "the kinetic apocalypse, amped up on bathtub crank and undiluted movie love. Oh, what a movie. "
+        #                "What a lovely movie!")
+        bayes.classify("I love this film")
 
 class TestDatabase(unittest.TestCase):
 
