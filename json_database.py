@@ -1,10 +1,6 @@
-__author__ = 'DoctorWatson'
-
-
 import json
 import os
-from json import JSONEncoder
-import bayes_template
+import bayes
 
 
 
@@ -19,7 +15,7 @@ def read_reviews(file_path):
         review_title = file
         review_text = obj.read()
         review_status = review_title[7]
-        tokenize_test = bayes_template.freed_tokenize(review_text)
+        tokenize_test = bayes.freed_tokenize(review_text)
         jsonString = {"name": review_title, "status": review_status, "text": review_text}
         json_object = json_object + [json.dumps(jsonString)]
 
@@ -40,7 +36,7 @@ def read_reviews(file_path):
 def load_json_database():
     """paths for each user will be different, and I didn't have a good way to specify it..."""
 
-    path = bayes_template.relative_path('data.json')
+    path = bayes.relative_path('data.json')
     with open(path, 'r') as f:
          data = json.load(f)
 

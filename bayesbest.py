@@ -19,16 +19,14 @@ class BayesClassifier:
         the system will proceed through training.  After running this method, the classifier
         is ready to classify input text."""
 
-        self.pos_freq = load_pickle('pos_freq.p')
-        self.neg_freq = load_pickle('neg_freq.p')
-        self.pos_pres = load_pickle('pos_pres.p')
-        self.neg_pres = load_pickle('neg_pres.p')
+        self.pos_pres = load_pickle('bi_pos_pres.p')
+        self.neg_pres = load_pickle('bi_neg_pres.p')
 
     def train(self):
         """Trains the Naive Bayes Sentiment Classifier."""
 
         # If we have pickle files, there is no need to train
-        if self.pos_freq:
+        if self.pos_pres:
             return 1
 
         # Open the database
@@ -43,57 +41,37 @@ class BayesClassifier:
         for review in data:
             # Get text and store in string
             review = json.loads(review)
-            words = [word.lower() for word in nltk.word_tokenize(review['text'])]
+            bigrams = [bigram.lower() for bigram in nltk.bigrams(review['text'])]
 
             # Increment counters
             if review['status'] == '5':
-                pos_word_counter += len(words)
+                pos_word_counter += len(bigrams)
                 pos_review_counter += 1
             else:
-                neg_word_counter += len(words)
+                neg_word_counter += len(bigrams)
                 neg_review_counter += 1
-
-            # Frequency
-            if review['status'] == '5':
-                for word in words:
-                    if word in self.pos_freq:
-                        self.pos_freq[word] += 1
-                    else:
-                        self.pos_freq[word] = 1.0
-            else:
-                for word in words:
-                    if word in self.neg_freq:
-                        self.neg_freq[word] += 1
-                    else:
-                        self.neg_freq[word] = 1.0
 
             # Presence
             if review['status'] == '5':
-                while len(words) > 0:
-                    word = words[0]
+                while len(bigrams) > 0:
+                    word = bigrams[0]
                     if word in self.pos_pres:
                         self.pos_pres[word] += 1
                     else:
                         self.pos_pres[word] = 1.0
-                    while word in words:
-                        words.remove(word)
+                    while word in bigrams:
+                        bigrams.remove(word)
             else:
-                while len(words) > 0:
-                    word = words[0]
+                while len(bigrams) > 0:
+                    word = bigrams[0]
                     if word in self.neg_pres:
                         self.neg_pres[word] += 1
                     else:
                         self.neg_pres[word] = 1.0
-                    while word in words:
-                        words.remove(word)
+                    while word in bigrams:
+                        bigrams.remove(word)
 
         # Normalize the counts after going through all the files and apply add-one smoothing
-        for a in self.pos_freq:
-            self.pos_freq[a] += 1
-            self.pos_freq[a] /= (pos_word_counter+len(self.pos_pres))
-        for a in self.neg_freq:
-            self.neg_freq[a] += 1
-            self.neg_freq[a] /= (neg_word_counter+len(self.neg_pres))
         for a in self.pos_pres:
             self.pos_pres[a] += 1
             self.pos_pres[a] /= (pos_review_counter+len(self.pos_pres))
@@ -102,10 +80,8 @@ class BayesClassifier:
             self.neg_pres[a] /= (neg_review_counter+len(self.neg_pres))
 
         # Save the training data with pickle
-        save_pickle(self.pos_freq, 'pos_freq.p')
-        save_pickle(self.neg_freq, 'neg_freq.p')
-        save_pickle(self.pos_pres, 'pos_pres.p')
-        save_pickle(self.neg_pres, 'neg_pres.p')
+        save_pickle(self.pos_pres, 'bi_pos_pres.p')
+        save_pickle(self.neg_pres, 'bi_neg_pres.p')
 
         return 1
     
@@ -119,14 +95,14 @@ class BayesClassifier:
         # check how likely words used are to be positive
         # check how likely it is words used are negative
 
-        words = [word.lower() for word in nltk.word_tokenize(s_text)]
+        bigrams = [bigram.lower() for bigram in nltk.bigrams(s_text)]
 
         # Initialize probabilities to 0
         pos_sum = 0
         neg_sum = 0
 
         # Add the logs of the probabilities (an alternative to multiplying the probabilities)
-        for token in words:
+        for token in bigrams:
             try:
                 pos_sum += (math.log10(self.pos_pres[token]))
                 neg_sum += (math.log10(self.neg_pres[token]))
