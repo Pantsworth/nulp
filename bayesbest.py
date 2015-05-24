@@ -41,7 +41,7 @@ class BayesClassifier:
         for review in data:
             # Get text and store in string
             review = json.loads(review)
-            bigrams = [bigram.lower() for bigram in nltk.bigrams(review['text'])]
+            bigrams = [(bigram[0].lower(), bigram[1].lower()) for bigram in nltk.bigrams(review['text'])]
 
             # Increment counters
             if review['status'] == '5':
@@ -95,7 +95,7 @@ class BayesClassifier:
         # check how likely words used are to be positive
         # check how likely it is words used are negative
 
-        bigrams = [bigram.lower() for bigram in nltk.bigrams(s_text)]
+        bigrams = [(bigram[0].lower(), bigram[1].lower()) for bigram in nltk.bigrams(s_text)]
 
         # Initialize probabilities to 0
         pos_sum = 0
