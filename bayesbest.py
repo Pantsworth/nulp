@@ -21,12 +21,14 @@ class BayesClassifier:
 
         self.pos_pres = load_pickle('bi_pos_pres.p')
         self.neg_pres = load_pickle('bi_neg_pres.p')
+        self.pos_stem_pres = load_pickle('pos_stem_pres.p')
+        self.neg_stem_pres = load_pickle('neg_stem_pres.p')
 
     def train(self):
         """Trains the Naive Bayes Sentiment Classifier."""
 
         # If we have pickle files, there is no need to train
-        if self.pos_pres:
+        if self.pos_pres and self.neg_pres and self.pos_stem_pres and self.neg_stem_pres:
             return 1
 
         # Open the database
@@ -43,6 +45,10 @@ class BayesClassifier:
             review = json.loads(review)
             bigrams = [(bigram[0].lower(), bigram[1].lower()) for bigram in nltk.bigrams(review['text'])]
 
+            # Stems
+            stemmer = nltk.stem.LancasterStemmer()
+            stems = [stemmer.stem(word).lower() for word in nltk.word_tokenize(review['text'])]
+
             # Increment counters
             if review['status'] == '5':
                 pos_word_counter += len(bigrams)
@@ -51,7 +57,7 @@ class BayesClassifier:
                 neg_word_counter += len(bigrams)
                 neg_review_counter += 1
 
-            # Presence
+            # Bigrams
             if review['status'] == '5':
                 while len(bigrams) > 0:
                     word = bigrams[0]
@@ -71,6 +77,26 @@ class BayesClassifier:
                     while word in bigrams:
                         bigrams.remove(word)
 
+            # Stem presence
+            if review['status'] == '5':
+                while len(stems) > 0:
+                    word = stems[0]
+                    if word in self.pos_stem_pres:
+                        self.pos_stem_pres[word] += 1
+                    else:
+                        self.pos_stem_pres[word] = 1.0
+                    while word in stems:
+                        stems.remove(word)
+            else:
+                while len(stems) > 0:
+                    word = stems[0]
+                    if word in self.neg_stem_pres:
+                        self.neg_stem_pres[word] += 1
+                    else:
+                        self.neg_stem_pres[word] = 1.0
+                    while word in stems:
+                        stems.remove(word)
+
         # Normalize the counts after going through all the files and apply add-one smoothing
         for a in self.pos_pres:
             self.pos_pres[a] += 1
@@ -78,10 +104,18 @@ class BayesClassifier:
         for a in self.neg_pres:
             self.neg_pres[a] += 1
             self.neg_pres[a] /= (neg_review_counter+len(self.neg_pres))
+        for a in self.pos_stem_pres:
+            self.pos_stem_pres[a] += 1
+            self.pos_stem_pres[a] /= (pos_review_counter+len(self.pos_stem_pres))
+        for a in self.neg_stem_pres:
+            self.neg_stem_pres[a] += 1
+            self.neg_stem_pres[a] /= (neg_review_counter+len(self.neg_stem_pres))
 
         # Save the training data with pickle
         save_pickle(self.pos_pres, 'bi_pos_pres.p')
         save_pickle(self.neg_pres, 'bi_neg_pres.p')
+        save_pickle(self.pos_pres, 'pos_stem_pres.p')
+        save_pickle(self.neg_pres, 'neg_stem_pres.p')
 
         return 1
     
@@ -97,12 +131,23 @@ class BayesClassifier:
 
         bigrams = [(bigram[0].lower(), bigram[1].lower()) for bigram in nltk.bigrams(s_text)]
 
+        stemmer = nltk.stem.LancasterStemmer()
+        stems = [stemmer.stem(word).lower() for word in nltk.word_tokenize(s_text)]
+
         # Initialize probabilities to 0
         pos_sum = 0
         neg_sum = 0
 
         # Add the logs of the probabilities (an alternative to multiplying the probabilities)
         for token in bigrams:
+            try:
+                pos_sum += (math.log10(self.pos_pres[token]))
+                neg_sum += (math.log10(self.neg_pres[token]))
+            except KeyError:
+                pass  # The word was not in our training data, so we ignore it
+
+        # Add the logs of the probabilities (an alternative to multiplying the probabilities)
+        for token in stems:
             try:
                 pos_sum += (math.log10(self.pos_pres[token]))
                 neg_sum += (math.log10(self.neg_pres[token]))
