@@ -25,12 +25,33 @@ def main():
     with open(bayesbest.relative_path('data.json'), 'r') as f:
         corpus = json.load(f)
     sub_corpora = segment_corpus(corpus, fold)
+    p1 = 0
+    r1 = 0
+    f1 = 0
+    p2 = 0
+    r2 = 0
+    f2 = 0
     for i in range(fold):
         print "Running subsection %x of %x" % (i, fold)
-        print "  bayes:"
-        run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i], bayes.BayesClassifier())
-        print "  bayesbest:"
-        run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i], bayesbest.BayesClassifier())
+        _p1, _r1, _f1 = run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
+                                       bayes.BayesClassifier())
+        _p2, _r2, _f2 = run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
+                                       bayesbest.BayesClassifier())
+        p1 += _p1
+        r1 += _r1
+        f1 += _f1
+        p2 += _p2
+        r2 += _r2
+        f2 += _f2
+    p1 /= fold
+    r1 /= fold
+    f1 /= fold
+    p2 /= fold
+    r2 /= fold
+    f2 /= fold
+
+    print p1, r1, f1
+    print p2, r2, f2
 
 
 def run_evaluation(training_data, test_data, classifier):

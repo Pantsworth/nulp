@@ -44,7 +44,8 @@ class BayesClassifier:
 
         for review in data:
             # Get text and store in string
-            review = json.loads(review)
+            if not training_data:
+                review = json.loads(review)
             words = [word.lower() for word in nltk.word_tokenize(review['text'])]
 
             # Increment counters
