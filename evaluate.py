@@ -14,7 +14,7 @@ def segment_corpus(corpus, fold):
     """
 
     shuffle(corpus)
-    splitted = fold*[[]]
+    splitted = [[], [], [], [], [], [], [], [], [], []]
     for i, obj in enumerate(corpus):
         splitted[i % 10].append(obj)
     return splitted
