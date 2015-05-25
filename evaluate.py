@@ -1,3 +1,4 @@
+from random import shuffle
 import json
 import bayesbest
 import itertools
@@ -9,8 +10,12 @@ def segment_corpus(corpus, fold):
     :param fold: number of segments
     :return: array of data objects with size fold
     """
-    pass
 
+    shuffle(corpus)
+    splitted = fold*[[]]
+    for i, obj in enumerate(corpus):
+        splitted[i % 10].append(obj)
+    return splitted
 
 def main():
     fold = 10
@@ -19,7 +24,6 @@ def main():
     sub_corpora = segment_corpus(corpus, fold)
     for i in range(fold):
         run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i])
-
 
 def run_evaluation(training_data, test_data):
     pass
