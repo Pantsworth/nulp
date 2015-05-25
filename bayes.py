@@ -24,15 +24,17 @@ class BayesClassifier:
         self.pos_pres = load_pickle('pos_pres.p')
         self.neg_pres = load_pickle('neg_pres.p')
 
-    def train(self):
+    def train(self, training_data=()):
         """Trains the Naive Bayes Sentiment Classifier."""
 
-        # If we have pickle files, there is no need to train
-        if self.pos_freq:
-            return 1
-
         # Open the database
-        data = json_database.load_json_database()
+        if training_data:
+            data = training_data
+        else:
+            # If we have pickle files, there is no need to train
+            if self.pos_pres and self.neg_pres:
+                return 1
+            data = json_database.load_json_database()
 
         # Initialize counters for words and documents
         pos_word_counter = 0
