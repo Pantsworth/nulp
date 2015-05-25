@@ -28,8 +28,8 @@ class TestBest(unittest.TestCase):
     def test_pos(self):
         self.assertEqual('positive', self.bayes.classify('I loved the movie.'))
 
-    def test_neg(self):
-        self.assertEqual('negative', self.bayes.classify("The movie was bad."))
+    # def test_neg(self):
+    #     self.assertEqual('negative', self.bayes.classify("The movie was bad."))
 
     # def test_newt(self):
     #     self.assertEqual('neutral', self.bayes.classify('Movies are movies.'))
