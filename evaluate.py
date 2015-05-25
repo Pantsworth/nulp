@@ -32,11 +32,26 @@ def main():
 def run_evaluation(training_data, test_data, classifier):
 
     classifier.train(training_data)
+    false_positive = 0.0
+    false_negative = 0.0
+    true_positive = 0.0
     for review in test_data:
-        
+        if review['status'] == '5':
+            result = 'positive'
+        else:
+            result = 'negative'
 
-    pass
-
+        if classifier.classify(review['text']) != result:
+            if result == 'positive':
+                false_negative += 1
+            else:
+                false_positive += 1
+        elif result == 'positive':
+            true_positive
+    precision = true_positive/(true_positive+false_positive)
+    recall = true_positive/(true_positive+false_negative)
+    f = 2.0*precision*recall/(precision+recall)
+    return precision, recall, f
 
 if __name__ == '__main__':
     main()
