@@ -32,10 +32,10 @@ def main():
     r2 = 0
     f2 = 0
     for i in range(fold):
-        print "Running subsection %x of %x" % (i, fold)
-        _p1, _r1, _f1 = run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
+        print "Running subsection", str(i), "of", str(fold)
+        _p1, _r1, _f1 = run_evaluation(itertools.chain.from_iterable(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
                                        bayes.BayesClassifier())
-        _p2, _r2, _f2 = run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
+        _p2, _r2, _f2 = run_evaluation(itertools.chain.from_iterable(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
                                        bayesbest.BayesClassifier())
         p1 += _p1
         r1 += _r1
