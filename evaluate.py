@@ -14,7 +14,9 @@ def segment_corpus(corpus, fold):
     """
 
     shuffle(corpus)
-    splitted = [[], [], [], [], [], [], [], [], [], []]
+    splitted = []
+    for i in range(fold):
+        splitted.append([])
     for i, obj in enumerate(corpus):
         splitted[i % 10].append(obj)
     return splitted
@@ -59,7 +61,7 @@ def main():
 def run_evaluation(training_data, test_data, classifier):
     print '  training...'
     classifier.train(training_data)
-    print '  doing stuff...'
+    print '  classifying...'
     false_positive = 0.0
     false_negative = 0.0
     true_positive = 0.0
