@@ -8,3 +8,11 @@
 |    f-measure    |         |              |
 *-----------------*---------*--------------*
 
+The best bayes looked at bigram presence and stem presence whereas the regular bayes looked exclusively at unigram
+presence. This is much more effective because it accounts for affixed versions of words as well as combinations of words
+whose meanings depend on each other. For example, "not" and "good" might appear in primarily positive reviews but
+"not good" might appear in exclusively negative ones. This best model accounts for this.
+
+To extend this model we could look take into account frequency as well as presence. We could also consider different
+weightings of variables (presence and frequency of stems and bigrams) when calculating the positive and negative
+probabilities. We could also have considered stems and bigrams simultaneously by looking at consecutive pairs of stems.
