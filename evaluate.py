@@ -1,6 +1,7 @@
 from random import shuffle
 import json
 import bayesbest
+import bayes
 import itertools
 
 def segment_corpus(corpus, fold):
@@ -25,7 +26,12 @@ def main():
     for i in range(fold):
         run_evaluation(itertools.chain(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i])
 
-def run_evaluation(training_data, test_data):
+def run_evaluation(training_data, test_data, classifier):
+
+    classifier.train(training_data)
+    for review in test_data:
+        
+
     pass
 
 
