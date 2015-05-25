@@ -35,8 +35,10 @@ def main():
         print "Running subsection", str(i+1), "of", str(fold)
         _p1, _r1, _f1 = run_evaluation(itertools.chain.from_iterable(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
                                        bayes.BayesClassifier())
+        print '  ', _p1, _r1, _f1
         _p2, _r2, _f2 = run_evaluation(itertools.chain.from_iterable(sub_corpora[:i]+sub_corpora[i+1:]), sub_corpora[i],
                                        bayesbest.BayesClassifier())
+        print '  ', _p2, _r2, _f2
         p1 += _p1
         r1 += _r1
         f1 += _f1
@@ -49,18 +51,20 @@ def main():
     p2 /= fold
     r2 /= fold
     f2 /= fold
-
-    print p1, r1, f1
-    print p2, r2, f2
+    print "Averages:"
+    print '  ', p1, r1, f1
+    print '  ', p2, r2, f2
 
 
 def run_evaluation(training_data, test_data, classifier):
-
+    print '  training...'
     classifier.train(training_data)
+    print '  doing stuff...'
     false_positive = 0.0
     false_negative = 0.0
     true_positive = 0.0
     for review in test_data:
+        review = json.loads(review)
         if review['status'] == '5':
             result = 'positive'
         else:

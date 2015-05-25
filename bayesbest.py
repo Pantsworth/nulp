@@ -44,8 +44,8 @@ class BayesClassifier:
 
         for review in data:
             # Get text and store in string
-            if not training_data:
-                review = json.loads(review)
+            review = json.loads(review)
+
             bigrams = [(bigram[0].lower(), bigram[1].lower()) for bigram in nltk.bigrams(review['text'])]
 
             # Stems
