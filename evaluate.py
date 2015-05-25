@@ -51,7 +51,7 @@ def run_evaluation(training_data, test_data, classifier):
             else:
                 false_positive += 1
         elif result == 'positive':
-            true_positive
+            true_positive += 1
     precision = true_positive/(true_positive+false_positive)
     recall = true_positive/(true_positive+false_negative)
     f = 2.0*precision*recall/(precision+recall)
